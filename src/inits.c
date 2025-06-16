@@ -1,18 +1,18 @@
 #include "defines.h"
-
 #include <stdint.h>
 #include <avr/io.h>
 
-void init_output(volatile uint8_t* ddrx_p, uint8_t pin) {
-    *ddrx_p |= (1 << pin);  // set led pin as output
+void init_output(volatile uint8_t* ddr_p, const uint8_t pin) {
+    *ddr_p |= (1 << pin);  // set led pin as output
 }
 
-void init_input(volatile uint8_t* portx_p, uint8_t pin) {
-    *portx_p |= (1 << pin);  // turn on pull-up resistor
+void init_input(volatile uint8_t* port_p, const uint8_t pin) {
+    *port_p |= (1 << pin);  // turn on pull-up resistor
 }
 
 void init_timer0_counter(void) {
-    TCCR0B |= TIMER_PRESCALER;
+    TCCR0B |= (1 << CS00) | (1 << CS02);  // prescaler == 1024
+    TIMSK0 |= (1 << TOIE0);  // enable overflow interrupt
 }
 
 void init_timer1_PWM(void) {

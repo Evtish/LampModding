@@ -10,6 +10,16 @@
 #define R_BUTTON_PIN PORTD2
 #define L_BUTTON_PIN PORTD3
 
+/* limits */
+#define ADC_MAX 255
+#define PWM_MAX 1023
+
+/* PWM timings */
+#define PWM_CHANGE_TIME_MS 3000UL
+#define PWM_STEP 1
+#define PWM_MIN_CHANGE_DELTA 10
+
+
 /* button timings */
 #define BTN_WAIT_MS 20
 #define BTN_DEBOUNCE_CHECK_PERIOD_MS 5
@@ -18,10 +28,4 @@
 /* TIMER0 */
 #define TIMER_BITNESS 8
 #define TIMER_SIZE (1 << TIMER_BITNESS)
-#define TIMER_PRESCALER ((1 << CS00) | (1 << CS02))  // 1024
-#define TIMER_PRESCALER_PWR_INDX 10
-#define TIMER_TICK_AMOUNT ((F_CPU >> TIMER_PRESCALER_PWR_INDX) * BTN_DEBOUNCE_CHECK_PERIOD_MS / 1000 - 1)
-
-/* with parameters */
-#define PIND_IS_LOW(x) (PIND & (1 << (x)))
-#define TICK_DELTA(counter, val) ((counter) >= (val) ? (counter) - (val) : TIMER_SIZE + (counter) - (val))
+#define TIMER_PRESCALER_BITNESS 10

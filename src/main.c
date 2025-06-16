@@ -1,8 +1,9 @@
 #include "defines.h"
 #include "inits.h"
 #include "button_controls.h"
+#include "pwm_controls.h"
+#include "timing_controls.h"
 #include "utils.h"
-
 #include <stdbool.h>
 #include <avr/io.h>
 #include <avr/interrupt.h>
@@ -13,21 +14,27 @@ ISR(ADC_vect) {
     adc_complete = true;
 }
 
+ISR(TIMER0_OVF_vect) {
+    timer0_overflow_amount++;
+}
+
 int main(void) {
     uint16_t brightness_level = 0;
     uint8_t light_mode = WHITE_ON;
 
-    button left_btn = {L_BUTTON_PIN, false, 0, 0};
-    button right_btn = {R_BUTTON_PIN, false, 0, 0};
+    pwm_helper_t white_led_pwm = {&OCR1A, 0, false, 0};
+    pwm_helper_t yellow_led_pwm = {&OCR1B, 0, false, 0};
+
+    button_t left_btn = {&PIND, L_BUTTON_PIN, false, 0, 0};
+    // button_t right_btn = {&PIND, R_BUTTON_PIN, false, 0, 0};
 
     /* -------------------- GPIO -------------------- */
     init_output(&DDRB, WHITE_LED_PIN);
     init_output(&DDRB, YELLOW_LED_PIN);
 
     init_input(&PORTD, L_BUTTON_PIN);
-    init_input(&PORTD, R_BUTTON_PIN);
 
-    /* -------------------- button timer -------------------- */
+    /* -------------------- counter -------------------- */
     init_timer0_counter();
 
     /* -------------------- PWM -------------------- */
@@ -40,27 +47,29 @@ int main(void) {
 
     while (true) {
         /* -------------------- update ADC value -------------------- */
-        if (adc_complete) {
-            brightness_level = map(ADCH, 0, 255, 0, 1023);  // use 8 high ADC bits only due to the inaccuracy of 1-2 low bits
+        if (adc_complete /*&& !white_led_pwm.changing_smoothly && !yellow_led_pwm.changing_smoothly*/) {
+            brightness_level = map(ADCH, 0, ADC_MAX, 0, PWM_MAX);  // use 8 high ADC bits only due to the inaccuracy of 1-2 low bits
             adc_complete = false;
         }
 
-        /* -------------------- update buttons -------------------- */
+        /* -------------------- update button -------------------- */
         btn_poll(&left_btn);
-        btn_poll(&right_btn);
 
-        if (btn_is_clicked(&left_btn)) light_mode = WHITE_ON;
-        if (btn_is_clicked(&right_btn)) light_mode = YELLOW_ON;
+        if (btn_is_clicked(&left_btn)) {
+            light_mode = !light_mode;
+            white_led_pwm.changing_smoothly = true;
+            yellow_led_pwm.changing_smoothly = true;
+        }
 
         /* -------------------- manage light -------------------- */
         switch (light_mode) {
             case WHITE_ON:
-                OCR1A = brightness_level;
-                OCR1B = 0;
+                pwm_change(&white_led_pwm, brightness_level);
+                pwm_change(&yellow_led_pwm, 0);
                 break;
             case YELLOW_ON:
-                OCR1B = brightness_level;
-                OCR1A = 0;
+                pwm_change(&yellow_led_pwm, brightness_level);
+                pwm_change(&white_led_pwm, 0);
                 break;
         }
     }
