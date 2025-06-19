@@ -1,6 +1,6 @@
 #include "defines.h"
-#include "button_controls.h"
-#include "timing_controls.h"
+#include "button.h"
+#include "timings.h"
 #include <stdint.h>
 #include <stdbool.h>
 
@@ -20,9 +20,10 @@ void btn_update(button_t* btn_p) {
 }
 
 void btn_poll(button_t* btn_p) {
-    if (tick_delta(TCNT0, btn_p->last_call_time) >= ms_to_ticks(BTN_DEBOUNCE_CHECK_PERIOD_MS)) {
+    uint32_t time_now = get_time_ms();
+    if (time_now - btn_p->last_call_time >= BTN_DEBOUNCE_CHECK_PERIOD_MS) {
+        btn_p->last_call_time = time_now;
         btn_update(btn_p);
-        btn_p->last_call_time = TCNT0;
     }
 }
 

@@ -10,22 +10,26 @@ void init_input(volatile uint8_t* port_p, const uint8_t pin) {
     *port_p |= (1 << pin);  // turn on pull-up resistor
 }
 
-void init_timer0_counter(void) {
-    TCCR0B |= (1 << CS00) | (1 << CS02);  // prescaler == 1024
-    TIMSK0 |= (1 << TOIE0);  // enable overflow interrupt
-}
+// void init_timer0_counter(void) {
+//     TCCR0B |= (1 << CS00) | (1 << CS02);  // prescaler == 1024
+//     TIMSK0 |= (1 << TOIE0);  // enable overflow interrupt
+// }
 
 void init_timer1_PWM(void) {
     TCCR1A |= (
         (1 << COM1A1) |  // non-inverting PWM (OCR1A)
         (1 << COM1B1) |  // non-inverting PWM (OCR1B)
-        (1 << WGM10) | (1 << WGM11)  // set 10-bit fast PWM mode
+        (0 << WGM10) | (1 << WGM11)  // set 10-bit fast PWM mode
     );
 
     TCCR1B |= (
-        (1 << WGM12) | // set 10-bit fast PWM mode
-        (1 << CS10)  // set prescaler == 1
+        (1 << WGM12) | (1 << WGM13) |  // set 10-bit fast PWM mode
+        (0 << CS10) | (1 << CS11) | (0 << CS12)  // set prescaler == 8
     );
+
+    ICR1 = PWM_MAX;
+
+    TIMSK1 |= (1 << TOIE1);  // enable overflow interrupt
 }
 
 void init_ADC(void) {
