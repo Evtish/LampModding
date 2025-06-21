@@ -2,10 +2,6 @@
 
 volatile uint32_t timer_overflow_amount_now = 0;
 
-//  -------------------------------------------------------------------
-// |                       INITIALIZATION STARTS                       |
-//  -------------------------------------------------------------------
-
 void timer1_init(void) {
     TCCR1A |= (
         (1 << COM1A1) |  // non-inverting PWM (OCR1A)
@@ -22,10 +18,6 @@ void timer1_init(void) {
 
     TIMSK1 |= (1 << TOIE1);  // enable overflow interrupt
 }
-
-//  -------------------------------------------------------------------
-// |                        INITIALIZATION ENDS                        |
-//  -------------------------------------------------------------------
 
 uint32_t ticks_to_ms(const uint32_t ticks) {
     return ticks * 1000UL / (F_CPU >> TIMER_PRESCALER_BITNESS);

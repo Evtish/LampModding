@@ -7,3 +7,4 @@
 extern volatile bool adc_complete;
 
 void adc_init(void);
+void adc_set_pin(const uint8_t pin);

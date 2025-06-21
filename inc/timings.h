@@ -8,5 +8,4 @@
 extern volatile uint32_t timer_overflow_amount_now;
 
 void timer1_init(void);
-// uint32_t ticks_to_ms(const uint32_t ticks);
 uint32_t get_time_ms(void);

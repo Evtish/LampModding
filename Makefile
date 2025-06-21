@@ -1,6 +1,3 @@
-# you should add a hard link of this file to the directory you want to build
-# or find a smarter way to build each directory separately
-
 PROGRAM_NAME := main
 
 SRC_DIR := src
@@ -34,7 +31,7 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
 
 -include $(DEPENDENCY_FILES)
 
-# linking
+# link
 $(ELF_FILE): $(OBJECT_FILES)
 	avr-gcc $^ $(C_FLAGS) -o $@
 
