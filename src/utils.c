@@ -1,5 +1,4 @@
 #include "utils.h"
-#include <stdint.h>
 
 int16_t limit(const int16_t val, const int16_t low, const int16_t high) {
     if (val > high)
