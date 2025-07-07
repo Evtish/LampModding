@@ -2,7 +2,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#define BTN_SHORT_CLICK_TIME_MS 50  // YOU CAN EDIT THE VALUE (the minimal recommended value is 50)
+#define BTN_SHORT_CLICK_TIME_MS 50UL  // YOU CAN EDIT THE VALUE (the minimal recommended value is 50)
 #define BTN_DEBOUNCE_CHECK_PERIOD_MS 5
 #define BTN_DEBOUNCE_AMOUNT_TO_PASS (BTN_SHORT_CLICK_TIME_MS / BTN_DEBOUNCE_CHECK_PERIOD_MS)
 

@@ -19,5 +19,5 @@ void adc_init(void) {
 
 void adc_set_pin(const uint8_t pin) {
     ADMUX |= pin;  // ADC on ADCn (PORTCn) pin
-    DIDR0 |= pin;  // disable digital input buffer to reduce power consumption (PINCn will be always 0)
+    DIDR0 |= (1 << pin);  // disable digital input buffer to reduce power consumption (PINCn will be always 0)
 }
